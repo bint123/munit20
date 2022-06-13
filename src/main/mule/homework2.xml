@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8b9f3f55-045c-4547-bc29-c60661faef3a" >
+		<http:listener-connection host="localhost" port="8083" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="cd72097e-eb2d-485e-94e4-1881d4c2cdb5" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Muhidinn123!" database="school" />
+	</db:config>
+	<flow name="homework2Flow" doc:id="926dcb1a-a453-4c33-be23-1a53f983bc42" >
+		<http:listener doc:name="Listener" doc:id="90b471ed-18b3-4460-8994-1847b94b1ced" config-ref="HTTP_Listener_config" path="/select2"/>
+		<ee:transform doc:name="Transform Message" doc:id="9244ea8f-1bc2-4779-8a28-3af3ef74d191" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{"fname":"sam","lname":"tom"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="homework2Flow1" doc:id="0c1d4d00-ace3-4a64-8a38-c0733c8bc4e5" >
+		<http:listener doc:name="Listener" doc:id="0efadcae-8645-4eb1-be35-c7ca872499ab" config-ref="HTTP_Listener_config" path="/insert3"/>
+		<db:insert doc:name="Insert" doc:id="2517c80b-8396-49f6-a342-14bf5b10fea6" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into flower (id, fname, lname, age) values (1, "bob", "la",22)]]></db:sql>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="0c6ac4be-f062-4b9f-b294-0a7dec6bc5a3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:select doc:name="Select" doc:id="cac372b2-5ca7-4ef5-b544-61b320ef50d3" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from flower ]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="6ebfce29-7b57-4ea0-95d0-f652c6e9d8ee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="bde63f16-182c-4a6f-8215-2180f1f02c14" message="done"/>
+	</flow>
+	<flow name="homework2Flow2" doc:id="f3c12585-5762-46cc-a893-ee5e4aee8974" >
+		<http:listener doc:name="Listener" doc:id="d726002b-b0bc-4b1e-9939-3c57d1c5cd89" config-ref="HTTP_Listener_config" path="/delete"/>
+		<db:delete doc:name="Delete" doc:id="2edb2b8d-fce1-4a4d-ba5e-747b77120588" config-ref="Database_Config">
+			<db:sql ><![CDATA[delete from flower where fname = "sam"]]></db:sql>
+		</db:delete>
+		<ee:transform doc:name="Transform Message" doc:id="f626a0b4-eb39-4a14-8ed4-cbb8c875130f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:select doc:name="Select" doc:id="71a26b58-3429-4472-9a9a-eef7ca44b7a5" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from flower ]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="44eeb953-a4ba-4e06-9f99-d7170c3a5aaa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="bc673720-effb-41f9-a432-39b4b9fa6887" message="test"/>
+	</flow>
+</mule>
